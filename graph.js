@@ -15,6 +15,8 @@ const mailRoute = [
     "Marketplace", "Post Office"
   ];
 
+
+
 function buildGraph(edges){
     let graph = Object.create(null);
     function addEdge(from, to){
@@ -61,13 +63,13 @@ class VillageState {
   function runRobot(state, robot, memory){
       for( let turn = 0;; turn++){
         if(state.parcels.length == 0){
-            console.log(`Done in ${turn} turns`);
-            break;  
+//            console.log(`Done in ${turn} turns`);
+            return turn;
           }
         let action = robot(state, memory);
         state = state.move(action.direction)
         memory = action.memory;
-        console.log(`moved to ${action.direction}`)
+//        console.log(`moved to ${action.direction}`)
         }
     }
 
@@ -81,7 +83,6 @@ class VillageState {
       for (let i = 0; i < work.length; i++) {
           let {at, route} = work[i];
           for (let place of graph[at]){
-            console.log(place, '----')
             if (place == to) return route.concat(place);
             if (!work.some( w => w.at == place)){
               work.push({at: place, route: route.concat(place)})
@@ -128,5 +129,17 @@ class VillageState {
         return new VillageState(`Post Office`, parcels);
     }
 
-    runRobot(VillageState.random(), goalOrientedRobot, []);
+   // runRobot(VillageState.random(), goalOrientedRobot, []);
 
+    function robotComaprison(robot1, memory1, robot2, memory2){
+      let turns1 = 0, turns2 =0;
+      let n = 100;
+      for(let i = 0; i < n; i++){
+        let state = VillageState.random()
+        turns1 += runRobot(state, robot1, memory1);
+        turns2 += runRobot(state, robot2, memory2);
+      }
+      console.log(`${robot1.name} made it in around ${turns1/n} turns and ${ robot2.name} made it in around ${turns2/n} turns`)
+    }
+
+    robotComaprison(routeRobot, [], goalOrientedRobot, []);
