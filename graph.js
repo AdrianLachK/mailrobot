@@ -103,6 +103,21 @@ class VillageState {
         return {direction: memory[0], memory: memory.slice(1)}
     }
 
+    function optimilizedGoalOrientedRobot({place, parcels}, route){
+      let routes = []
+      if (route.length == 0) {
+        for(let parcel of parcels){
+          if (parcel.place == place){
+            routes.push(findRoute(roadGraph, place, parcel.address))
+          } else{
+            routes.push(findRoute(roadGraph, place, parcel.place))
+          }
+        }
+        route = routes.sort((a, b) => a.length - b.length)[0];
+      }
+      return {direction: route[0], memory: route.slice(1)}
+    }
+
     function goalOrientedRobot({place, parcels}, route){
       if (route.length == 0) {
         let parcel = parcels[0];
@@ -142,4 +157,4 @@ class VillageState {
       console.log(`${robot1.name} made it in around ${turns1/n} turns and ${ robot2.name} made it in around ${turns2/n} turns`)
     }
 
-    robotComaprison(routeRobot, [], goalOrientedRobot, []);
+    robotComaprison(optimilizedGoalOrientedRobot, [], goalOrientedRobot, []);
